@@ -1,14 +1,34 @@
 import React, {Component} from 'react';
 import './App.css'
 import Todos from './components/Todos'
+import Header from './components/layout/Header'
 
 class App extends Component {
+  markComplete = (id) =>{
+    this.setState({
+      todos: this.state.todos.map(x=>{
+        if(x.id ===  id){
+          x.completed = !x.completed
+        }
+        return x
+      })
+    })
+  }
+
+  delTodo = (id) =>{
+    this.setState({
+      todos: [...this.state.todos.filter(todo=>{
+        return todo.id !== id;
+      })]
+    })
+  }
+
   state={
     todos:[
         {
             id:1,
             title: 'Take out the trash',
-            completed: false
+            completed: true
         },
         {
             id:2,
@@ -30,8 +50,12 @@ class App extends Component {
   render(){
     return (
       <div>
-        <h2>Buongiorno</h2>
-        <Todos todo={this.state.todos}/>
+        <Header/>
+        <Todos 
+        todo={this.state.todos}
+        markComplete = {this.markComplete}
+        delTodo = {this.delTodo}
+        />
       </div>
     );
   }
