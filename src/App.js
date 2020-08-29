@@ -7,7 +7,8 @@ import Todos from './components/Todos'
 import Header from './components/layout/Header'
 import AddTodo from './components/AddTodo'
 import About from './components/pages/About'
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 
 import './App.css'
 
@@ -24,51 +25,52 @@ class App extends Component {
   }
 
   delTodo = (id) => {
-    this.setState({
+    axios.delete(`https://jsonplaceholder.typicode.com/todos/
+    ${id}`)
+    .then(res=> this.setState({
       todos: [...this.state.todos.filter(todo => {
         return todo.id !== id;
       })]
-    })
+    }))
   }
 
   addTodo = (title) => {
-    const newTodo = {
-      id: uuidv4(),
-      title: title,
-      completed: false
-    }
-    this.setState({
-      todos: [...this.state.todos, newTodo]
-    })
+    // const newTodo = {
+    //   id: uuidv4(),
+    //   title: title,
+    //   completed: false
+    // }
+    // this.setState({
+    //   todos: [...this.state.todos, newTodo]
+    // })
     // this.setState({
     //   todos: [...this.state.todos, valor]
     // })
+    axios.post('https://jsonplaceholder.typicode.com/todos', {
+      title,
+      completed: false
+    })
+    .then(res=> this.setState({
+      todos: [...this.state.todos, res.data]
+    }))
+    
   }
 
   state = {
-    todos: [
-      {
-        id: uuidv4(),
-        title: 'Take out the trash',
-        completed: true
-      },
-      {
-        id: uuidv4(),
-        title: 'Take out the dog',
-        completed: false
-      },
-      {
-        id: uuidv4(),
-        title: 'Hunt rats',
-        completed: false
-      },
-      {
-        id: uuidv4(),
-        title: 'Kill Yorm the giant',
-        completed: false
-      }
-    ]
+    todos: []
   }
+
+  componentDidMount(){
+    axios.get('https://jsonplaceholder.typicode.com/todos?_limit=10')
+    .then(res => {
+      res.data.map(x=>{
+        this.setState({
+          todos: [...this.state.todos, x]
+        })
+      })
+    })
+  }
+
   render() {
     return (
       <Router>
